@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  eula-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eula-api
+    hostname: eula-api
+    tty: true
+    restart: unless-stopped
+    volumes:
+      - ./:/usr/src/app
+      - ./node_modules:/usr/src/app/node_modules
+    environment:
+      - DB_URL
+      - APP_KEY
+    ports:
+      - "5000:5000"
+    stdin_open: true
