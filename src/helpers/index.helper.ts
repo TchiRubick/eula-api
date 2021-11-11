@@ -1,3 +1,3 @@
-export const rgx = (pattern: string): RegExp => new RegExp(`.*${pattern}.*`);
+export const likeFormatter = (pattern: string): RegExp => new RegExp(`.*${pattern}.*`);
 
-export default rgx;
+export default likeFormatter;
