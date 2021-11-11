@@ -1,6 +1,6 @@
 import logger from '~/utils/logger/logger.util';
 import { setCrypto } from '~/utils/crypter/crypter.utils';
-import { likeFormatter } from '~/helpers/index.helper';
+import { likeFormatter, escapeRegexString } from '~/helpers/index.helper';
 
 import User from './user.model';
 import * as iU from './user.interface';
@@ -58,11 +58,14 @@ export const getByFilter = async (search?: string, page?: number, size = 30): Pr
     let where: any;
 
     if (search) {
+      const escapedSearch = escapeRegexString(search);
+      const likeSearch = likeFormatter(escapedSearch);
+
       where = {
         $or: [
-          { name: { $regex: likeFormatter(search), $options: 'i' } },
-          { email: { $regex: likeFormatter(search), $options: 'i' } },
-          { role: { $regex: likeFormatter(search), $options: 'i' } },
+          { name: { $regex: likeSearch, $options: 'i' } },
+          { email: { $regex: likeSearch, $options: 'i' } },
+          { role: { $regex: likeSearch, $options: 'i' } },
         ],
       };
     }
