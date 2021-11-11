@@ -10,6 +10,7 @@ import { database } from '~/database/index.database';
 
 import testRoutePublic from '~/routes/test/public/test.route';
 import userPublicRoute from '~/routes/user/user.public.route';
+import userProtectedRoute from '~/routes/user/user.protected.route';
 
 require('module-alias/register');
 
@@ -28,6 +29,7 @@ try {
 
   app.use('/api/public/test', testRoutePublic);
   app.use('/api/public/user', userPublicRoute);
+  app.use('/api/protected/user', userProtectedRoute);
 
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (err instanceof ValidationError) {
