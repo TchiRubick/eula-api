@@ -5,7 +5,7 @@ import { likeFormatter, escapeRegexString } from '~/helpers/index.helper';
 import User from './user.model';
 import * as iU from './user.interface';
 
-export const create = async (props: iU.iUser): Promise<iU.iUser | Error> => {
+export const create = async (props: iU.iReqUser): Promise<iU.iUser | Error> => {
   let result: iU.iUser | Error;
 
   try {

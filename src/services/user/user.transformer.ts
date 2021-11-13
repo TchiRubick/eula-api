@@ -1,19 +1,11 @@
+import _ from 'lodash';
+
 import { iResUserPublic, iResUserAdmin, iUser } from './user.interface';
 
 export const transformToPublic = (data: iUser): iResUserPublic => {
-  const {
-    _id,
-    name,
-    email,
-    role,
-  } = data;
+  const result = _.pick(data, ['_id', 'name', 'email', 'role', 'createdAt', 'updatedAt']);
 
-  return {
-    _id,
-    name,
-    email,
-    role,
-  };
+  return result;
 };
 
 export const transformManyToPublic = (data: iUser[]): iResUserPublic[] => (

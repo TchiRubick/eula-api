@@ -11,6 +11,7 @@ import { database } from '~/database/index.database';
 import testRoutePublic from '~/routes/test/public/test.route';
 import userPublicRoute from '~/routes/user/user.public.route';
 import userAdminRoute from '~/routes/user/user.admin.route';
+import inventoryPrivateRoute from '~/routes/inventory/inventory.private.route';
 
 require('module-alias/register');
 
@@ -28,8 +29,9 @@ try {
   database();
 
   app.use('/api/public/test', testRoutePublic);
-  app.use('/api/public/user', userPublicRoute);
-  app.use('/api/admin/user', userAdminRoute);
+  app.use('/api/public/users', userPublicRoute);
+  app.use('/api/admin/users', userAdminRoute);
+  app.use('/api/private/inventories', inventoryPrivateRoute);
 
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (err instanceof ValidationError) {
