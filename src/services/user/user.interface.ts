@@ -8,25 +8,12 @@ export type iUserPassword = string;
 
 export type iUserRole = string;
 
-export type iUserObjId = {
-  _id: iUserId,
-};
-
-export type iUserFilter = {
-  search?: string,
-};
-
 export type iUser = {
   _id?: iUserId,
   name: iUserName,
   email: iUserEmail,
   password: iUserPassword,
   role: iUserRole,
-};
-
-export type iReqLogin = {
-  email: iUserEmail,
-  password: iUserPassword,
 };
 
 export type iResUserPublic = {
@@ -36,7 +23,10 @@ export type iResUserPublic = {
   role: iUserRole,
 };
 
-export type iResLogin = {
-  user: iResUserPublic,
-  token?: string,
+export type iResUserAdmin = {
+  _id?: iUserId,
+  name: iUserName,
+  email: iUserEmail,
+  password: iUserPassword,
+  role: iUserRole,
 };

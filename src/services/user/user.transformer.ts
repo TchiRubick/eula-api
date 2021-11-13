@@ -1,4 +1,4 @@
-import { iResUserPublic, iUser } from './user.interface';
+import { iResUserPublic, iResUserAdmin, iUser } from './user.interface';
 
 export const transformToPublic = (data: iUser): iResUserPublic => {
   const {
@@ -18,4 +18,10 @@ export const transformToPublic = (data: iUser): iResUserPublic => {
 
 export const transformManyToPublic = (data: iUser[]): iResUserPublic[] => (
   data.map(transformToPublic)
+);
+
+export const transformToAdmin = (data: iUser): iResUserAdmin => data;
+
+export const transformManyToAdmin = (data: iUser[]): iResUserAdmin[] => (
+  data.map(transformToAdmin)
 );

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { validate, Joi } from 'express-validation';
-import protectedCheckMiddleware from '~/middlewares/protectedCheckMiddleware';
-import { transformToPublic, transformManyToPublic } from '~/services/user/user.transformer';
+import adminCheckMiddleware from '~/middlewares/adminCheckMiddleware';
+import { transformToAdmin, transformManyToAdmin } from '~/services/user/user.transformer';
 import * as userRepository from '~/services/user/user.repository';
 import { getPaginationStats } from '~/services/pagination/pagination.service';
 
@@ -17,14 +17,14 @@ const createValidation = {
   }),
 };
 
-router.post('/', protectedCheckMiddleware, validate(createValidation, {}, {}), async (req: Request, res: Response) => {
+router.post('/', adminCheckMiddleware, validate(createValidation, {}, {}), async (req: Request, res: Response) => {
   const user = await userRepository.create(req.body);
 
   if (user instanceof Error) {
     return res.status(401).json({ ...user, error: 'Cannot create the user' });
   }
 
-  return res.json({ user: transformToPublic(user) });
+  return res.json({ user: transformToAdmin(user) });
 });
 
 const filterValidation = {
@@ -41,7 +41,7 @@ type requestFilter = {
   size?: string
 };
 
-router.get('/', protectedCheckMiddleware, validate(filterValidation, {}, {}), async (req: Request, res: Response) => {
+router.get('/', adminCheckMiddleware, validate(filterValidation, {}, {}), async (req: Request, res: Response) => {
   const { search, page: qPage, size: qSize }: requestFilter = req.query;
 
   const page = qPage ? parseInt(qPage, 10) : 0;
@@ -55,7 +55,7 @@ router.get('/', protectedCheckMiddleware, validate(filterValidation, {}, {}), as
 
   const count = await userRepository.getCount();
 
-  return res.json({ users: transformManyToPublic(users), stats: getPaginationStats(page, size, count) });
+  return res.json({ users: transformManyToAdmin(users), stats: getPaginationStats(page, size, count) });
 });
 
 export default router;
