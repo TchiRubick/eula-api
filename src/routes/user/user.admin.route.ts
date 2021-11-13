@@ -21,7 +21,7 @@ router.post('/', adminCheckMiddleware, validate(createValidation, {}, {}), async
   const user = await userRepository.create(req.body);
 
   if (user instanceof Error) {
-    return res.status(401).json({ ...user, error: 'Cannot create the user' });
+    return res.status(409).json({ error: user.message, message: 'Cannot create the user' });
   }
 
   return res.json({ user: transformToAdmin(user) });
@@ -50,7 +50,7 @@ router.get('/', adminCheckMiddleware, validate(filterValidation, {}, {}), async 
   const users = await userRepository.getByFilter(search, page, size);
 
   if (users instanceof Error) {
-    return res.status(401).json({ ...users, error: 'Cannot get list of users' });
+    return res.status(422).json({ error: users.message, message: 'Cannot get list of users' });
   }
 
   const count = await userRepository.getCount();

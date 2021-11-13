@@ -20,13 +20,13 @@ router.post('/', validate(loginValidation, {}, {}), async (req: Request, res: Re
   const user = await getOne({ email });
 
   if (user instanceof Error) {
-    return res.status(401).json({ ...user, error: 'user not found' });
+    return res.status(422).json({ error: user.message, message: 'user not found' });
   }
 
   const validePassword = await compareCrypto(password, user.password);
 
   if (!validePassword) {
-    return res.status(401).json({ error: 'user not found' });
+    return res.status(403).json({ error: 'Credentials doesn\'t match', message: 'user not found' });
   }
 
   const publicUser = transformToPublic(user);

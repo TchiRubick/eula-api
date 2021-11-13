@@ -32,6 +32,14 @@ export type iReqInv = {
   quantity: iInvQuantity
 }
 
+export type iReqUpdateInv = {
+  name?: iInvName
+  barcode?: iInvBarcode
+  price?: iInvPrice
+  cost?: iInvCost
+  quantity?: iInvQuantity
+}
+
 export type iResInvPublic = {
   _id: string
   name: iInvName
