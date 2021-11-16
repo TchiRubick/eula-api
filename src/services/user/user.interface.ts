@@ -39,4 +39,11 @@ export type iResUserPublic = {
   updatedAt: iUserUpdatedAt
 };
 
+export type iReqUpdateUser = {
+  name?: iUserName
+  email?: iUserEmail
+  role?: iUserRole
+  password?: iUserPassword
+};
+
 export type iResUserAdmin = iUser

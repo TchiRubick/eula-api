@@ -89,3 +89,23 @@ export const getCount = async (where?: any | unknown): Promise<number> => {
 
   return count ?? 0;
 };
+
+export const updateOne = async (where: any | unknown, params: iU.iReqUpdateUser): Promise<iU.iUser | Error> => {
+  let result: iU.iUser | Error;
+
+  try {
+    result = await User.findOneAndUpdate(where, params, {
+      new: true,
+    });
+
+    if (!result) {
+      throw Error('User not updated');
+    }
+  } catch (error: any) {
+    logger.warning(error.message);
+
+    result = Error(error.message);
+  }
+
+  return result;
+};

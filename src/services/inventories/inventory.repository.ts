@@ -62,8 +62,6 @@ export const updateOne = async (where: any | unknown, params: iI.iReqUpdateInv):
   return result;
 };
 
-export default create;
-
 export const getByFilter = async (search?: string, page?: number, size = 30): Promise<iI.iInv[] | Error> => {
   let result: iI.iInv[] | Error;
 

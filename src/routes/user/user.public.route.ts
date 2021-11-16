@@ -14,7 +14,7 @@ const loginValidation = {
   }),
 };
 
-router.post('/', validate(loginValidation, {}, {}), async (req: Request, res: Response) => {
+router.post('/', validate(loginValidation), async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await getOne({ email });

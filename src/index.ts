@@ -10,6 +10,7 @@ import { database } from '~/database/index.database';
 
 import testRoutePublic from '~/routes/test/public/test.route';
 import userPublicRoute from '~/routes/user/user.public.route';
+import userPrivateRoute from '~/routes/user/user.private.route';
 import userAdminRoute from '~/routes/user/user.admin.route';
 import inventoryPrivateRoute from '~/routes/inventory/inventory.private.route';
 
@@ -30,6 +31,7 @@ try {
 
   app.use('/api/public/test', testRoutePublic);
   app.use('/api/public/users', userPublicRoute);
+  app.use('/api/private/users', userPrivateRoute);
   app.use('/api/admin/users', userAdminRoute);
   app.use('/api/private/inventories', inventoryPrivateRoute);
 
