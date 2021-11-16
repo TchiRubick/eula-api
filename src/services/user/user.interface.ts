@@ -46,4 +46,11 @@ export type iReqUpdateUser = {
   password?: iUserPassword
 };
 
-export type iResUserAdmin = iUser
+export type iResUserAdmin = {
+  _id: iUserId
+  name: iUserName
+  email: iUserEmail
+  role: iUserRole
+  createdAt: iUserCreatedAt
+  updatedAt: iUserUpdatedAt
+};

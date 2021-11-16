@@ -73,10 +73,10 @@ router.delete('/:id', adminCheckMiddleware, validate(idValidation), async (req: 
     return res.status(422).json({ error: '', message: 'Cannot remove the user' });
   }
 
-  return res.json({ removed: isRemovedUser });
+  return res.json({ removed: !!isRemovedUser });
 });
 
-router.patch('/reactivate/:id', adminCheckMiddleware, validate(idValidation), async (req: Request, res: Response) => {
+router.patch('/:id', adminCheckMiddleware, validate(idValidation), async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const isActivatedUser = await userRepository.reactivate(id);
@@ -85,7 +85,19 @@ router.patch('/reactivate/:id', adminCheckMiddleware, validate(idValidation), as
     return res.status(422).json({ error: '', message: 'Cannot reactivate the user' });
   }
 
-  return res.json({ removed: isActivatedUser });
+  return res.json({ removed: !!isActivatedUser });
+});
+
+router.get('/:id', adminCheckMiddleware, validate(idValidation), async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const user = await userRepository.getOne({ _id: id });
+
+  if (user instanceof Error) {
+    return res.status(422).json({ error: user.message, message: 'User not found' });
+  }
+
+  return res.json({ user: transformToAdmin(user) });
 });
 
 export default router;

@@ -12,7 +12,11 @@ export const transformManyToPublic = (data: iUser[]): iResUserPublic[] => (
   data.map(transformToPublic)
 );
 
-export const transformToAdmin = (data: iUser): iResUserAdmin => data;
+export const transformToAdmin = (data: iUser): iResUserAdmin => {
+  const result = _.omit(data, ['password']);
+
+  return result;
+};
 
 export const transformManyToAdmin = (data: iUser[]): iResUserAdmin[] => (
   data.map(transformToAdmin)
