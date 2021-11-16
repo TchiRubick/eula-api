@@ -58,13 +58,13 @@ router.get('/', adminCheckMiddleware, validate(filterValidation, {}, {}), async 
   return res.json({ users: transformManyToAdmin(users), stats: getPaginationStats(page, size, count) });
 });
 
-const removeValidation = {
+const idValidation = {
   params: Joi.object({
     id: Joi.string().required(),
   }),
 };
 
-router.delete('/:id', adminCheckMiddleware, validate(removeValidation), async (req: Request, res: Response) => {
+router.delete('/:id', adminCheckMiddleware, validate(idValidation), async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const isRemovedUser = await userRepository.coldRemove(id);
@@ -74,6 +74,18 @@ router.delete('/:id', adminCheckMiddleware, validate(removeValidation), async (r
   }
 
   return res.json({ removed: isRemovedUser });
+});
+
+router.patch('/reactivate/:id', adminCheckMiddleware, validate(idValidation), async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const isActivatedUser = await userRepository.reactivate(id);
+
+  if (!isActivatedUser) {
+    return res.status(422).json({ error: '', message: 'Cannot reactivate the user' });
+  }
+
+  return res.json({ removed: isActivatedUser });
 });
 
 export default router;

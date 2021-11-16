@@ -114,11 +114,27 @@ export const coldRemove = async (_id: iU.iUserId): Promise<boolean> => {
   let result = false;
 
   try {
-    result = await User.findOneAndUpdate({ _id }, { role: 'removed' }, {
+    result = await User.findOneAndUpdate({ _id, role: 'user' }, { role: 'removed' }, {
       new: false,
     });
   } catch (error: any) {
     logger.error(error.message);
+  }
+
+  return result;
+};
+
+export const reactivate = async (_id: iU.iUserId): Promise<boolean> => {
+  let result = false;
+
+  try {
+    result = await User.findOneAndUpdate({ _id, role: 'removed' }, { role: 'user' }, {
+      new: false,
+    });
+  } catch (error: any) {
+    logger.error(error.message);
+
+    result = false;
   }
 
   return result;
