@@ -102,9 +102,23 @@ export const updateOne = async (where: any | unknown, params: iU.iReqUpdateUser)
       throw Error('User not updated');
     }
   } catch (error: any) {
-    logger.warning(error.message);
+    logger.error(error.message);
 
     result = Error(error.message);
+  }
+
+  return result;
+};
+
+export const coldRemove = async (_id: iU.iUserId): Promise<boolean> => {
+  let result = false;
+
+  try {
+    result = await User.findOneAndUpdate({ _id }, { role: 'removed' }, {
+      new: false,
+    });
+  } catch (error: any) {
+    logger.error(error.message);
   }
 
   return result;

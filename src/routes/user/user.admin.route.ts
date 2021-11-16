@@ -58,4 +58,22 @@ router.get('/', adminCheckMiddleware, validate(filterValidation, {}, {}), async 
   return res.json({ users: transformManyToAdmin(users), stats: getPaginationStats(page, size, count) });
 });
 
+const removeValidation = {
+  params: Joi.object({
+    id: Joi.string().required(),
+  }),
+};
+
+router.delete('/:id', adminCheckMiddleware, validate(removeValidation), async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const isRemovedUser = await userRepository.coldRemove(id);
+
+  if (!isRemovedUser) {
+    return res.status(422).json({ error: '', message: 'Cannot remove the user' });
+  }
+
+  return res.json({ removed: isRemovedUser });
+});
+
 export default router;

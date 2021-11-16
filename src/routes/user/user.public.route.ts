@@ -23,6 +23,10 @@ router.post('/', validate(loginValidation), async (req: Request, res: Response) 
     return res.status(422).json({ error: user.message, message: 'user not found' });
   }
 
+  if (user.role === 'removed') {
+    return res.status(422).json({ error: '', message: 'User is no more active' });
+  }
+
   const validePassword = await compareCrypto(password, user.password);
 
   if (!validePassword) {
