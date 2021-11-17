@@ -29,106 +29,67 @@ export const create = async (props: iS.iSale): Promise<iS.iSale | Error> => {
   return result;
 };
 
-export const getOne = async (where: any | unknown): Promise<iS.iSale | Error> => {
-  let result: iS.iSale | Error;
-
+export const getOne: iS.getOne = async (where, relations) => {
   try {
-    result = await Sale.findOne(where);
+    const sale: iS.iSale = await Sale.findOne(where);
 
-    if (!result) {
-      throw Error('Sale not found');
-    }
-  } catch (error: any) {
-    logger.warning(error.message);
-
-    result = Error(error.message);
-  }
-
-  return result;
-};
-
-export const getOneWithUser = async (where: any | unknown): Promise<iS.iSaleRelationsUser | Error> => {
-  let result: iS.iSaleRelationsUser | Error;
-
-  try {
-    const sale = await Sale.findOne(where);
+    let inventoryResult: iS.iInvSale | Error | undefined;
+    let UserResult: iS.iUserSale | Error | undefined;
 
     if (!sale) {
       throw Error('Sale not found');
     }
 
-    const user = await User.findOne({ _id: sale.user });
+    if (relations && relations.includes('inventory')) {
+      inventoryResult = await getInventoryRelation(sale.inventory);
 
-    if (!user) {
-      throw Error('User Sale not found');
+      if (inventoryResult instanceof Error) {
+        return sale;
+      }
     }
 
-    result = { ...sale, user };
+    if (relations && relations.includes('user')) {
+      UserResult = await getUserRelation(sale.user);
+
+      if (UserResult instanceof Error) {
+        return sale;
+      }
+    }
+
+    return {
+      ...sale,
+      inventory: inventoryResult ?? sale.inventory,
+      user: UserResult ?? sale.user,
+    };
   } catch (error: any) {
     logger.error(error.message);
 
-    result = Error(error.message);
+    return Error(error.message);
   }
-
-  return result;
 };
 
-export const getOneWithInventory = async (where: any | unknown): Promise<iS.iSaleRelationsInv | Error> => {
-  let result: iS.iSaleRelationsInv | Error;
-
+const getInventoryRelation = async (inventoryId: iS.iSale['inventory']): Promise<iS.iInvSale | Error> => {
   try {
-    const sale = await Sale.findOne(where);
+    const inventory: iS.iInvSale = await Inventory.findOne({ _id: inventoryId });
 
-    if (!sale) {
-      throw Error('Sale not found');
-    }
-
-    const inventory = await Inventory.findOne({ _id: sale.inventory });
-
-    if (!inventory) {
-      throw Error('Inventory Sale not found');
-    }
-
-    result = { ...sale, inventory };
+    return inventory;
   } catch (error: any) {
     logger.error(error.message);
 
-    result = Error(error.message);
+    return Error(error.message);
   }
-
-  return result;
 };
 
-export const getOneWithAll = async (where: any | unknown): Promise<iS.iSaleRelations | Error> => {
-  let result: iS.iSaleRelations | Error;
-
+const getUserRelation = async (userId: iS.iSale['user']): Promise<iS.iUserSale | Error> => {
   try {
-    const sale = await Sale.findOne(where);
+    const user = await User.findOne({ _id: userId });
 
-    if (!sale) {
-      throw Error('Sale not found');
-    }
-
-    const inventory = await Inventory.findOne({ _id: sale.inventory });
-
-    if (!inventory) {
-      throw Error('Inventory Sale not found');
-    }
-
-    const user = await User.findOne({ _id: sale.user });
-
-    if (!user) {
-      throw Error('User Sale not found');
-    }
-
-    result = { ...sale, inventory, user };
+    return user;
   } catch (error: any) {
     logger.error(error.message);
 
-    result = Error(error.message);
+    return Error(error.message);
   }
-
-  return result;
 };
 
 export const getByDate = async (date: string):

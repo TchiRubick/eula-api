@@ -32,3 +32,18 @@ export type iSaleRelationsUser = {
   quantity: number
   ticket: number
 }
+
+export type iInvSale = iInv
+
+export type iUserSale = iUser
+
+export interface getOne {
+  (where: any | unknown, relations: string[] | undefined):
+  Promise<Error | {
+    inventory: string | iInv | Error
+    user: string | iUser | Error
+    prices: number
+    quantity: number
+    ticket: number
+  }>
+}
