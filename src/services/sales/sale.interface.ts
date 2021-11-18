@@ -38,12 +38,23 @@ export type iInvSale = iInv
 export type iUserSale = iUser
 
 export interface getOne {
-  (where: any | unknown, relations: string[] | undefined):
-  Promise<Error | {
-    inventory: string | iInv | Error
-    user: string | iUser | Error
-    prices: number
-    quantity: number
-    ticket: number
+  (where: any | unknown, relations: string[] | undefined): Promise<Error | {
+    inventory: string | iInv | Error;
+    user: string | iUser | Error;
+    prices: number;
+    quantity: number;
+    ticket: number;
   }>
 }
+
+export interface getByDate {
+  (where: Date, relations: string[] | undefined): Promise<Error | Promise<getByDateResult>[]>
+}
+
+export type getByDateResult = Promise<Error | {
+  inventory: string | Error | iInv;
+  user: string | Error | iUser;
+  prices: number;
+  quantity: number;
+  ticket: number;
+}>

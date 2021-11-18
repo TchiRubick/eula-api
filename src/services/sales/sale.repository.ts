@@ -92,10 +92,7 @@ const getUserRelation = async (userId: iS.iSale['user']): Promise<iS.iUserSale |
   }
 };
 
-export const getByDate = async (date: string):
-Promise<iS.iSaleRelationsUser[] | Error | Promise<iS.iSaleRelationsUser>[]> => {
-  let result: iS.iSaleRelationsUser[] | Error | Promise<iS.iSaleRelationsUser>[];
-
+export const getByDate: iS.getByDate = async (date, relations) => {
   try {
     const searchDate = new Date(date);
 
@@ -106,26 +103,43 @@ Promise<iS.iSaleRelationsUser[] | Error | Promise<iS.iSaleRelationsUser>[]> => {
       },
     };
 
-    const sale = await Inventory.find(where);
+    const sale: iS.iSale[] = await Inventory.find(where);
 
     if (!sale) {
-      throw Error('Inventories not found');
+      throw Error('Sale not found');
     }
 
-    result = sale.map(async (s: iS.iSale) => {
-      const user = await User.findOne({ _id: s.user });
+    const result = sale.map(async (s): Promise<iS.getByDateResult> => {
+      let inventoryResult: iS.iInvSale | Error | undefined;
+      let UserResult: iS.iUserSale | Error | undefined;
 
-      if (!user) {
-        throw Error('User Sale not found');
+      if (relations && relations.includes('inventory')) {
+        inventoryResult = await getInventoryRelation(s.inventory);
+
+        if (inventoryResult instanceof Error) {
+          return s;
+        }
       }
 
-      return { ...s, user };
+      if (relations && relations.includes('user')) {
+        UserResult = await getUserRelation(s.user);
+
+        if (UserResult instanceof Error) {
+          return s;
+        }
+      }
+
+      return {
+        ...s,
+        inventory: inventoryResult ?? s.inventory,
+        user: UserResult ?? s.user,
+      };
     });
+
+    return result;
   } catch (error: any) {
     logger.error(error.message);
 
-    result = Error(error.message);
+    return Error(error.message);
   }
-
-  return result;
 };
