@@ -40,27 +40,31 @@ export const getOne: iS.getOne = async (where, relations) => {
       throw Error('Sale not found');
     }
 
-    if (relations && relations.includes('inventory')) {
-      inventoryResult = await getInventoryRelation(sale.inventory);
+    if (!relations) {
+      return sale;
+    }
 
-      if (inventoryResult instanceof Error) {
-        return sale;
+    let result: iS.iResult = sale;
+
+    if (relations) {
+      if (relations.includes('inventory')) {
+        inventoryResult = await getInventoryRelation(sale.inventory);
+
+        if (inventoryResult instanceof Error === false) {
+          result = { ...sale, inventory: inventoryResult ?? sale.inventory };
+        }
+      }
+
+      if (relations.includes('user')) {
+        UserResult = await getUserRelation(sale.user);
+
+        if (UserResult instanceof Error === false) {
+          result = { ...sale, user: UserResult ?? sale.user };
+        }
       }
     }
 
-    if (relations && relations.includes('user')) {
-      UserResult = await getUserRelation(sale.user);
-
-      if (UserResult instanceof Error) {
-        return sale;
-      }
-    }
-
-    return {
-      ...sale,
-      inventory: inventoryResult ?? sale.inventory,
-      user: UserResult ?? sale.user,
-    };
+    return result;
   } catch (error: any) {
     logger.error(error.message);
 
@@ -109,31 +113,28 @@ export const getByDate: iS.getByDate = async (date, relations) => {
       throw Error('Sale not found');
     }
 
-    const result = sale.map(async (s): Promise<iS.getByDateResult> => {
+    const result = sale.map(async (s): Promise<iS.getResultByDate> => {
       let inventoryResult: iS.iInvSale | Error | undefined;
       let UserResult: iS.iUserSale | Error | undefined;
+      let finalResult: iS.iResult = { ...s };
 
       if (relations && relations.includes('inventory')) {
         inventoryResult = await getInventoryRelation(s.inventory);
 
-        if (inventoryResult instanceof Error) {
-          return s;
+        if (inventoryResult instanceof Error === false) {
+          finalResult = { ...s, inventory: inventoryResult ?? s.inventory };
         }
       }
 
       if (relations && relations.includes('user')) {
         UserResult = await getUserRelation(s.user);
 
-        if (UserResult instanceof Error) {
-          return s;
+        if (UserResult instanceof Error === false) {
+          finalResult = { ...s, user: UserResult ?? s.user };
         }
       }
 
-      return {
-        ...s,
-        inventory: inventoryResult ?? s.inventory,
-        user: UserResult ?? s.user,
-      };
+      return finalResult;
     });
 
     return result;
