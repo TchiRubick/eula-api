@@ -1,13 +1,16 @@
+import { ClientSession } from 'mongoose';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 
 import logger from '~/utils/logger/logger.util';
 
-import Sale from './sale.model';
+import Sale, { session as ssTransaction } from './sale.model';
 import User from '~/services/user/user.model';
 import Inventory from '~/services/inventories/inventory.model';
 
 import * as iS from './sale.interface';
+
+export const session = (): Promise<ClientSession> => ssTransaction;
 
 export const create = async (props: iS.iSale): Promise<iS.iSale | Error> => {
   let result: iS.iSale | Error;
@@ -21,9 +24,25 @@ export const create = async (props: iS.iSale): Promise<iS.iSale | Error> => {
       throw Error('Cannot create a sale note');
     }
   } catch (error: any) {
-    logger.warning(error.message);
+    logger.error(error.message);
 
     result = Error(error.message);
+  }
+
+  return result;
+};
+
+export const getLastTicket = async (): Promise<number> => {
+  let result = 0;
+
+  try {
+    const sale = await Sale.findOne().sort('-created_at');
+
+    if (sale) {
+      result = sale.ticket;
+    }
+  } catch (error: any) {
+    logger.error(error.message);
   }
 
   return result;

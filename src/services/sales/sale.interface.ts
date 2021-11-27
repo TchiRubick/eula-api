@@ -1,6 +1,12 @@
 import { iInv } from '~/services/inventories/inventory.interface';
 import { iUser } from '~/services/user/user.interface';
 
+export type iInput = {
+  inventory: string,
+  prices: number,
+  quantity: number,
+}
+
 export type iSale = {
   inventory: string
   user: string

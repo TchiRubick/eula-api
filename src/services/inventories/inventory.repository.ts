@@ -16,7 +16,7 @@ export const create = async (props: iI.iReqInv): Promise<iI.iInv | Error> => {
       throw Error('Cannot create inventorie');
     }
   } catch (error: any) {
-    logger.warning(error.message);
+    logger.error(error.message);
 
     result = Error(error.message);
   }
@@ -34,7 +34,27 @@ export const getOne = async (where: any | unknown): Promise<iI.iInv | Error> => 
       throw Error('Inventorie not found');
     }
   } catch (error: any) {
-    logger.warning(error.message);
+    logger.error(error.message);
+
+    result = Error(error.message);
+  }
+
+  return result;
+};
+
+export const oscillatorQuantity = async (where: any | unknown, quantity: number): Promise<iI.iInv | Error> => {
+  let result: iI.iInv | Error;
+
+  try {
+    result = await Inventory.findOneAndUpdate(where, { $inc: { quantity } }, {
+      new: true,
+    });
+
+    if (!result) {
+      throw Error('Inventorie not updated');
+    }
+  } catch (error: any) {
+    logger.error(error.message);
 
     result = Error(error.message);
   }
@@ -54,7 +74,7 @@ export const updateOne = async (where: any | unknown, params: iI.iReqUpdateInv):
       throw Error('Inventorie not updated');
     }
   } catch (error: any) {
-    logger.warning(error.message);
+    logger.error(error.message);
 
     result = Error(error.message);
   }
@@ -92,7 +112,7 @@ export const getByFilter = async (search?: string, page?: number, size = 30): Pr
       throw Error('Inventories not found');
     }
   } catch (error: any) {
-    logger.warning(error.message);
+    logger.error(error.message);
 
     result = Error(error.message);
   }

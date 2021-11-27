@@ -12,4 +12,6 @@ const saleSchema = new Schema({
 
 const Sale = mongoose.model('sales', saleSchema);
 
+export const session = mongoose.startSession();
+
 export default Sale;
