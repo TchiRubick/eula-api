@@ -32,7 +32,7 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
 
     if (inventory instanceof Error) {
       sessionTransaction.abortTransaction();
-      return res.status(422).json({ error: inventory.message, message: 'Error while creating ticket on get' });
+      return res.status(422).json({ error: inventory.message, message: 'Error while verifying inventory' });
     }
 
     const { _id: idInventory, quantity: qttInv, name } = inventory;
@@ -40,14 +40,14 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
 
     if (qttInv < i.quantity) {
       sessionTransaction.abortTransaction();
-      return res.status(422).json({ error: `Not enough sold ${name}`, message: 'Error while creating ticket on get' });
+      return res.status(422).json({ error: `Not enough sold ${name}`, message: `Not enough sold ${name}` });
     }
 
     const decrementInv = await oscillatorQuantity({ _id: idInventory }, (i.quantity * -1));
 
     if (decrementInv instanceof Error) {
       sessionTransaction.abortTransaction();
-      return res.status(422).json({ error: decrementInv.message, message: 'Error while creating ticket on dec' });
+      return res.status(422).json({ error: decrementInv.message, message: 'Error while updating quantity' });
     }
 
     const ticket = lastTicket + 1;
@@ -57,7 +57,7 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
 
     if (createSale instanceof Error) {
       sessionTransaction.abortTransaction();
-      return res.status(422).json({ error: createSale.message, message: 'Error while creating ticket on cre' });
+      return res.status(422).json({ error: createSale.message, message: 'Error while creating ticket' });
     }
   }
 
