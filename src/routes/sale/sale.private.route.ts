@@ -35,7 +35,13 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
       return res.status(422).json({ error: inventory.message, message: 'Error while creating ticket on get' });
     }
 
-    const { _id: idInventory } = inventory;
+    const { _id: idInventory, quantity: qttInv, name } = inventory;
+    const { _id: idUser } = req.user;
+
+    if (qttInv < i.quantity) {
+      sessionTransaction.abortTransaction();
+      return res.status(422).json({ error: `Not enough sold ${name}`, message: 'Error while creating ticket on get' });
+    }
 
     const decrementInv = await oscillatorQuantity({ _id: idInventory }, (i.quantity * -1));
 
@@ -45,7 +51,6 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
     }
 
     const ticket = lastTicket + 1;
-    const { _id: idUser } = req.user;
     const transformedSale = transformCreationToDb(i, ticket, idUser, idInventory);
 
     const createSale = await saleRepository.create(transformedSale);
