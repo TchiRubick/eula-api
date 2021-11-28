@@ -32,11 +32,31 @@ export const create = async (props: iS.iSale): Promise<iS.iSale | Error> => {
   return result;
 };
 
+export const update = async (where: any | unknown, params: any | unknown): Promise<iS.iSale | Error> => {
+  let result: iS.iSale | Error;
+
+  try {
+    result = await Sale.findOneAndUpdate(where, params, {
+      new: true,
+    });
+
+    if (!result) {
+      throw Error('Sale not updated');
+    }
+  } catch (error: any) {
+    logger.error(error.message);
+
+    result = Error(error.message);
+  }
+
+  return result;
+};
+
 export const getLastTicket = async (): Promise<number> => {
   let result = 0;
 
   try {
-    const sale = await Sale.findOne().sort('-created_at');
+    const sale = await Sale.findOne().sort({ field: 'asc', _id: -1 });
 
     if (sale) {
       result = sale.ticket;
@@ -155,6 +175,20 @@ export const getByDate: iS.getByDate = async (date, relations) => {
 
       return finalResult;
     });
+
+    return result;
+  } catch (error: any) {
+    logger.error(error.message);
+
+    return Error(error.message);
+  }
+};
+
+export const get = async (where: any | unknown): Promise<iS.iSaleDbResultOne[] | Error> => {
+  let result: iS.iSaleDbResultOne[] | Error;
+
+  try {
+    result = await Sale.find(where);
 
     return result;
   } catch (error: any) {

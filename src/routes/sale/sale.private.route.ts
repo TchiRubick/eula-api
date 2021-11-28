@@ -21,6 +21,8 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
 
   const lastTicket = await saleRepository.getLastTicket();
 
+  const ticket = lastTicket + 1;
+
   sessionTransaction.startTransaction();
 
   // eslint-disable-next-line no-restricted-syntax
@@ -50,7 +52,6 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
       return res.status(422).json({ error: decrementInv.message, message: 'Error while updating quantity' });
     }
 
-    const ticket = lastTicket + 1;
     const transformedSale = transformCreationToDb(i, ticket, idUser, idInventory);
 
     const createSale = await saleRepository.create(transformedSale);
@@ -63,7 +64,7 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
 
   sessionTransaction.commitTransaction();
 
-  return res.json({ });
+  return res.json({ ticket });
 });
 
 export default router;

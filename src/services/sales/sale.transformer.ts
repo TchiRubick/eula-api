@@ -5,6 +5,7 @@ export const transformCreationToDb = (input: iInput, ticket: number, user: strin
   ticket,
   user,
   inventory,
+  status: 'saled',
 });
 
 export default transformCreationToDb;

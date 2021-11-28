@@ -20,7 +20,7 @@ const createValidation = {
   }),
 };
 
-router.post('/', privateCheckMiddleware, validate(createValidation, {}, {}), async (req: Request, res: Response) => {
+router.post('/', privateCheckMiddleware, validate(createValidation), async (req: Request, res: Response) => {
   const inventory = await inventoryRepository.create(req.body);
 
   if (inventory instanceof Error) {

@@ -13,6 +13,17 @@ export type iSale = {
   prices: number
   quantity: number
   ticket: number
+  status: string;
+}
+
+export type iSaleDbResultOne = {
+  _id: string
+  inventory: string
+  user: string
+  prices: number
+  quantity: number
+  ticket: number
+  status: string;
 }
 
 export type iResult = {
@@ -21,6 +32,7 @@ export type iResult = {
     prices: number;
     quantity: number;
     ticket: number;
+    status: string;
 }
 
 export type iInvSale = iInv

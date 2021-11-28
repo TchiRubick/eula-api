@@ -8,6 +8,7 @@ const saleSchema = new Schema({
   prices: { type: Number, required: true },
   quantity: { type: Number, required: true },
   ticket: { type: Number, required: true },
+  status: { type: String, default: 'saled' },
 }, { timestamps: true });
 
 const Sale = mongoose.model('sales', saleSchema);

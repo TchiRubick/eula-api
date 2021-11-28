@@ -14,6 +14,7 @@ import userPrivateRoute from '~/routes/user/user.private.route';
 import userAdminRoute from '~/routes/user/user.admin.route';
 import inventoryPrivateRoute from '~/routes/inventory/inventory.private.route';
 import salePrivateRoute from '~/routes/sale/sale.private.route';
+import saleAdminRoute from '~/routes/sale/sale.admin.route';
 
 require('module-alias/register');
 
@@ -36,6 +37,7 @@ try {
   app.use('/api/admin/users', userAdminRoute);
   app.use('/api/private/inventories', inventoryPrivateRoute);
   app.use('/api/private/sales', salePrivateRoute);
+  app.use('/api/admin/sales', saleAdminRoute);
 
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (err instanceof ValidationError) {
