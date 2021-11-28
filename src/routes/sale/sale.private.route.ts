@@ -35,10 +35,10 @@ router.put('/', privateCheckMiddleware, validate(createValidation), async (req: 
       return res.status(422).json({ error: inventory.message, message: 'Error while verifying inventory' });
     }
 
-    const { _id: idInventory, quantity: qttInv, name } = inventory;
+    const { _id: idInventory, quantity: qttInventory, name } = inventory;
     const { _id: idUser } = req.user;
 
-    if (qttInv < i.quantity) {
+    if (qttInventory < i.quantity) {
       sessionTransaction.abortTransaction();
       return res.status(422).json({ error: `Not enough sold ${name}`, message: `Not enough sold ${name}` });
     }

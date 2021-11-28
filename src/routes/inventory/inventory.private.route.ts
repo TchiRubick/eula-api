@@ -36,6 +36,7 @@ const updateValidation = {
     barcode: Joi.string().alphanum().min(10).max(15),
     price: Joi.number().greater(0),
     cost: Joi.number().greater(0),
+    quantity: Joi.number().greater(0),
   }),
   params: Joi.object({
     barcode: Joi.string().alphanum().min(10).max(15)
@@ -60,6 +61,7 @@ router.put('/:barcode',
       barcode,
       price,
       cost,
+      quantity,
     } = req.body;
 
     const dataUpdate: iI.iReqUpdateInv = {
@@ -67,6 +69,7 @@ router.put('/:barcode',
       ...(barcode && inventory.barcode !== barcode ? { barcode } : {}),
       ...(price && inventory.price !== price ? { price } : {}),
       ...(cost && inventory.cost !== cost ? { cost } : {}),
+      ...(quantity ? { quantity: quantity + inventory.quantity } : {}),
     };
 
     const inventoryUpdated = await inventoryRepository.updateOne({ barcode: currentBarcode }, dataUpdate);
