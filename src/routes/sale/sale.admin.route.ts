@@ -26,7 +26,7 @@ router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
     const updateInventory = await oscillatorQuantity({ _id: inventory }, quantity);
 
     if (updateInventory instanceof Error) {
-      sessionTransaction.abortTransaction();
+      await sessionTransaction.abortTransaction();
       return res.status(422).json({ error: updateInventory.message, message: 'Cannot cancel ticket inventory' });
     }
 
@@ -35,12 +35,12 @@ router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
     const updateSale = await saleRepository.update({ _id: idSale }, { status: 'refund' });
 
     if (updateSale instanceof Error) {
-      sessionTransaction.abortTransaction();
+      await sessionTransaction.abortTransaction();
       return res.status(422).json({ error: 'Cannot refund ticket', message: 'Cannot cancel ticket' });
     }
   }
 
-  sessionTransaction.commitTransaction();
+  await sessionTransaction.commitTransaction();
 
   return res.json({ sale });
 });
