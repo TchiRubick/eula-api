@@ -1,50 +1,79 @@
 import { iInv } from '~/services/inventories/inventory.interface';
-import { iUser } from '~/services/user/user.interface';
+import { iUser, iResUserPublic } from '~/services/user/user.interface';
 
-export type iInput = {
+export type iInputInventory = {
   inventory: string,
-  prices: number,
+  price: number,
   quantity: number,
 }
 
-export type iSale = {
-  inventory: string
-  user: string
-  prices: number
-  quantity: number
-  ticket: number
-  status: string;
+export type iInputSale = {
+  inventories: iInputInventory[],
+  user: string,
+  ticket: number,
+  status: string,
+  payed: number,
+  backed: number,
 }
 
-export type iSaleDbResultOne = {
-  _id: string
-  inventory: string
-  user: string
-  prices: number
-  quantity: number
-  ticket: number
-  status: string;
+export type iOutputSale = {
+  inventories: iInv[],
+  user: iUser,
+  ticket: number,
+  status: string,
+  payed: number,
+  backed: number,
 }
 
-export type iResult = {
-    inventory: string | Error | iInv;
-    user: string | Error | iUser;
-    prices: number;
-    quantity: number;
-    ticket: number;
-    status: string;
+export type iSampleOutputSale = {
+  _id: string,
+  inventories: iInputInventory[],
+  user: string,
+  ticket: number,
+  status: string,
+  payed: number,
+  backed: number,
 }
 
-export type iInvSale = iInv
+export type iUserOutputSale = {
+  _id: string,
+  inventories: iInputInventory[],
+  user: iUser,
+  ticket: number,
+  status: string,
+  payed: number,
+  backed: number,
+}
 
-export type iUserSale = iUser
+export type iUserOutputSalePrivate = {
+  _id: string,
+  inventories: iInputInventory[],
+  user: iResUserPublic,
+  ticket: number,
+  status: string,
+  payed: number,
+  backed: number,
+}
+
+export type iOutputMoney = {
+  _id: null,
+  payed: number,
+  backed: number,
+  total: number,
+}
 
 export interface getOne {
-  (where: any | unknown, relations: ('inventory' | 'user')[] | undefined): Promise<Error | iResult>
+  (where: any | unknown): Promise<Error | iOutputSale>
+}
+
+export interface getOneNoJoin {
+  (where: any | unknown): Promise<Error | iSampleOutputSale>
 }
 
 export interface getByDate {
-  (where: Date, relations: ('inventory' | 'user')[] | undefined): Promise<Error | Promise<getResultByDate>[]>
+  (date: Date | number, page: number, size: number): Promise<Error | iUserOutputSale[]>
 }
 
-export type getResultByDate = Promise<Error | iResult>
+export interface getTotalByDateSaled {
+  (date: Date | number): Promise<iOutputMoney>
+}

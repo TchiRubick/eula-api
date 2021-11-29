@@ -9,10 +9,10 @@ const router = Router();
 router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
   const lastTicket = await saleRepository.getLastTicket();
 
-  const sales = await saleRepository.get({ ticket: lastTicket, status: 'saled' });
+  const sale = await saleRepository.getOneNoJoin({ ticket: lastTicket, status: 'saled' });
 
-  if (sales instanceof Error) {
-    return res.status(422).json({ error: sales.message, message: 'Cannot cancel ticket' });
+  if (sale instanceof Error) {
+    return res.status(422).json({ error: sale.message, message: 'Cannot cancel ticket' });
   }
 
   const sessionTransaction = await saleRepository.session();
@@ -20,8 +20,10 @@ router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
   sessionTransaction.startTransaction();
 
   // eslint-disable-next-line no-restricted-syntax
-  for await (const sale of sales) {
-    const updateInventory = await oscillatorQuantity({ _id: sale.inventory }, sale.quantity);
+  for await (const inv of sale.inventories) {
+    const { inventory, quantity } = inv;
+
+    const updateInventory = await oscillatorQuantity({ _id: inventory }, quantity);
 
     if (updateInventory instanceof Error) {
       sessionTransaction.abortTransaction();
@@ -40,7 +42,7 @@ router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
 
   sessionTransaction.commitTransaction();
 
-  return res.json({ sales });
+  return res.json({ sale });
 });
 
 export default router;

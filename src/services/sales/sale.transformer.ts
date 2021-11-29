@@ -1,11 +1,13 @@
-import { iInput, iSale } from '~/services/sales/sale.interface';
+import _ from 'lodash';
 
-export const transformCreationToDb = (input: iInput, ticket: number, user: string, inventory: string): iSale => ({
-  ...input,
-  ticket,
-  user,
-  inventory,
-  status: 'saled',
-});
+import { iUserOutputSalePrivate, iUserOutputSale } from '~/services/sales/sale.interface';
 
-export default transformCreationToDb;
+export const transformSampleUserToPrivate = (data: iUserOutputSale): iUserOutputSalePrivate => {
+  const newData = _.pick(data, ['_id', 'inventories', 'ticket', 'status', 'payed', 'backed']);
+  const newUser = _.pick(data.user, ['_id', 'name', 'email', 'role', 'createdAt', 'updatedAt']);
+
+  return { ...newData, user: newUser };
+};
+
+export const transformManySampleUserToPrivate = (data: iUserOutputSale[]): iUserOutputSalePrivate[] => (
+  data.map(transformSampleUserToPrivate));

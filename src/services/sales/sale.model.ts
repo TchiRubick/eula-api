@@ -3,12 +3,21 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const saleSchema = new Schema({
-  inventory: { type: Schema.Types.ObjectId, ref: 'Inventory' },
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
-  prices: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-  ticket: { type: Number, required: true },
+  inventories: [{
+    inventory: { type: Schema.Types.ObjectId, ref: 'inventories' },
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+  }],
+  user: { type: Schema.Types.ObjectId, ref: 'users' },
+  ticket: {
+    type: Number,
+    required: true,
+    unique: true,
+    dropDups: true,
+  },
   status: { type: String, default: 'saled' },
+  payed: { type: Number, required: true },
+  backed: { type: Number, required: true },
 }, { timestamps: true });
 
 const Sale = mongoose.model('sales', saleSchema);

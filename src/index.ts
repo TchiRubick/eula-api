@@ -3,7 +3,6 @@ import { ValidationError } from 'express-validation';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import createError from 'http-errors';
-import bodyParser from 'body-parser';
 
 import logger from '~/utils/logger/logger.util';
 import { database } from '~/database/index.database';
@@ -27,16 +26,19 @@ try {
   app.use(cookieParser());
   app.use(cors({ origin: [/localhost(:[0-9]+)*/] }));
   app.use('/favicon.ico', express.static('public/favicon.ico'));
-  app.use(bodyParser.json());
+  app.use(express.json());
+  app.use(express.urlencoded({
+    extended: true,
+  }));
 
   database();
 
   app.use('/api/public/test', testRoutePublic);
   app.use('/api/public/users', userPublicRoute);
   app.use('/api/private/users', userPrivateRoute);
-  app.use('/api/admin/users', userAdminRoute);
   app.use('/api/private/inventories', inventoryPrivateRoute);
   app.use('/api/private/sales', salePrivateRoute);
+  app.use('/api/admin/users', userAdminRoute);
   app.use('/api/admin/sales', saleAdminRoute);
 
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
