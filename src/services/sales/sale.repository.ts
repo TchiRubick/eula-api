@@ -102,7 +102,7 @@ export const getOneNoJoin: iS.getOneNoJoin = async (where) => {
 
 export const getOne: iS.getOne = async (where) => {
   try {
-    const result: iS.iOutputSale = await Sale.findOne(where).populate(['user', 'inventory']);
+    const result: iS.iOutputSale = await Sale.findOne(where).populate(['user', 'inventories.inventory']);
 
     return result;
   } catch (error: any) {

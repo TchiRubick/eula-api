@@ -118,19 +118,16 @@ const detailsValidation = {
   }),
 };
 
-router.get('/:barcode',
-  privateCheckMiddleware,
-  validate(detailsValidation, {}, {}),
-  async (req: Request, res: Response) => {
-    const { barcode } = req.params;
+router.get('/:barcode', privateCheckMiddleware, validate(detailsValidation), async (req: Request, res: Response) => {
+  const { barcode } = req.params;
 
-    const inventory = await inventoryRepository.getOne({ barcode });
+  const inventory = await inventoryRepository.getOne({ barcode });
 
-    if (inventory instanceof Error) {
-      return res.status(422).json({ error: inventory.message, message: 'Cannot get inventory' });
-    }
+  if (inventory instanceof Error) {
+    return res.status(422).json({ error: inventory.message, message: 'Cannot get inventory' });
+  }
 
-    return res.json({ users: transformToAdmin(inventory) });
-  });
+  return res.json({ users: transformToAdmin(inventory) });
+});
 
 export default router;

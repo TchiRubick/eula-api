@@ -17,12 +17,15 @@ export type iInputSale = {
 }
 
 export type iOutputSale = {
+  _id: string,
   inventories: iInv[],
   user: iUser,
   ticket: number,
   status: string,
   payed: number,
   backed: number,
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 export type iSampleOutputSale = {
@@ -33,6 +36,8 @@ export type iSampleOutputSale = {
   status: string,
   payed: number,
   backed: number,
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 export type iUserOutputSale = {
@@ -43,6 +48,8 @@ export type iUserOutputSale = {
   status: string,
   payed: number,
   backed: number,
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 export type iUserOutputSalePrivate = {
@@ -53,6 +60,20 @@ export type iUserOutputSalePrivate = {
   status: string,
   payed: number,
   backed: number,
+  createdAt: Date,
+  updatedAt: Date,
+}
+
+export type iOutputSalePrivate = {
+  _id: string,
+  inventories: iInv[],
+  user: iResUserPublic,
+  ticket: number,
+  status: string,
+  payed: number,
+  backed: number,
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 export type iOutputMoney = {

@@ -6,7 +6,7 @@ import privateCheckMiddleware from '~/middlewares/privateCheckMiddleware';
 import * as saleRepository from '~/services/sales/sale.repository';
 import { getOne, oscillatorQuantity } from '~/services/inventories/inventory.repository';
 import { getPaginationStats } from '~/services/pagination/pagination.service';
-import { transformManySampleUserToPrivate } from '~/services/sales/sale.transformer';
+import { transformManySampleUserToPrivate, transformToPrivate } from '~/services/sales/sale.transformer';
 
 const router = Router();
 
@@ -132,6 +132,24 @@ router.get('/', privateCheckMiddleware, validate(filterValidation), async (req: 
   const salesResponse = transformManySampleUserToPrivate(sales);
 
   return res.json({ sales: salesResponse, stats, resume });
+});
+
+const detailsValidation = {
+  params: Joi.object({
+    ticket: Joi.number().required(),
+  }),
+};
+
+router.get('/:ticket', privateCheckMiddleware, validate(detailsValidation), async (req: Request, res: Response) => {
+  const { ticket } = req.params;
+
+  const sale = await saleRepository.getOne({ ticket });
+
+  if (sale instanceof Error) {
+    return res.status(422).json({ error: sale.message, message: 'Cannot get sale' });
+  }
+
+  return res.json({ users: transformToPrivate(sale) });
 });
 
 export default router;
