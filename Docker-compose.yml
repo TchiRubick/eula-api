@@ -12,8 +12,30 @@ services:
       - ./:/usr/src/app
       - ./node_modules:/usr/src/app/node_modules
     environment:
-      - DB_URL
-      - APP_KEY
+      - APP_KEY=1234567890
     ports:
       - "5000:5000"
     stdin_open: true
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - node-webapp-network
+  
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.4.6
+    volumes:
+      - ~/mongo:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    networks:
+      - node-webapp-network
+
+networks:
+  node-webapp-network:
+    driver: bridge

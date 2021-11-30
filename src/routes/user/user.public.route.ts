@@ -1,9 +1,10 @@
 import { Request, Response, Router } from 'express';
 import { validate, Joi } from 'express-validation';
 import { transformToPublic } from '~/services/user/user.transformer';
-import { getOne } from '~/services/user/user.repository';
+import { getOne, create } from '~/services/user/user.repository';
 import { compareCrypto } from '~/utils/crypter/crypter.utils';
 import { setToken } from '~/utils/jwt/jwt.utils';
+import { config } from '~/config/index.config';
 
 const router = Router();
 
@@ -36,6 +37,35 @@ router.post('/', validate(loginValidation), async (req: Request, res: Response) 
   const publicUser = transformToPublic(user);
 
   return res.json({ user: publicUser, token: setToken(publicUser) });
+});
+
+const createValidation = {
+  body: Joi.object({
+    email: Joi.string().email().required(),
+  }),
+};
+
+router.post('/create/admin', validate(createValidation), async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  const password = config.adminDefaultPassword;
+
+  const name = email.split('@')[0];
+
+  const input = {
+    email,
+    password,
+    name,
+    role: 'admin',
+  };
+
+  const user = await create(input);
+
+  if (user instanceof Error) {
+    return res.status(409).json({ error: user.message, message: 'Cannot create the user admin' });
+  }
+
+  return res.json({ user: transformToPublic(user) });
 });
 
 export default router;

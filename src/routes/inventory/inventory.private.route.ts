@@ -69,7 +69,7 @@ router.put('/:barcode',
       ...(barcode && inventory.barcode !== barcode ? { barcode } : {}),
       ...(price && inventory.price !== price ? { price } : {}),
       ...(cost && inventory.cost !== cost ? { cost } : {}),
-      ...(quantity ? { quantity: quantity + inventory.quantity } : {}),
+      ...(quantity ? { quantity: parseInt(quantity, 10) + inventory.quantity } : {}),
     };
 
     const inventoryUpdated = await inventoryRepository.updateOne({ barcode: currentBarcode }, dataUpdate);
@@ -109,7 +109,7 @@ router.get('/', privateCheckMiddleware, validate(filterValidation, {}, {}), asyn
 
   const count = await inventoryRepository.getCount();
 
-  return res.json({ users: transformManyToAdmin(inventories), stats: getPaginationStats(page, size, count) });
+  return res.json({ inventories: transformManyToAdmin(inventories), stats: getPaginationStats(page, size, count) });
 });
 
 const detailsValidation = {
@@ -127,7 +127,7 @@ router.get('/:barcode', privateCheckMiddleware, validate(detailsValidation), asy
     return res.status(422).json({ error: inventory.message, message: 'Cannot get inventory' });
   }
 
-  return res.json({ users: transformToAdmin(inventory) });
+  return res.json({ inventory: transformToAdmin(inventory) });
 });
 
 export default router;

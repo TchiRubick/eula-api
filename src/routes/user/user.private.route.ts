@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { validate, Joi } from 'express-validation';
 
 import privateCheckMiddleware from '~/middlewares/privateCheckMiddleware';
-import { updateOne } from '~/services/user/user.repository';
+import { updateOne, getOne } from '~/services/user/user.repository';
 import { transformToPublic } from '~/services/user/user.transformer';
 import { setCrypto } from '~/utils/crypter/crypter.utils';
 
@@ -22,6 +22,18 @@ router.put('/new-password', privateCheckMiddleware, validate(changeValidation), 
 
   if (user instanceof Error) {
     return res.status(422).json({ error: user.message, message: 'user not updated' });
+  }
+
+  return res.json({ user: transformToPublic(user) });
+});
+
+router.get('/', privateCheckMiddleware, async (req: Request, res: Response) => {
+  const { _id: idUser } = req.user;
+
+  const user = await getOne({ _id: idUser });
+
+  if (user instanceof Error) {
+    return res.status(422).json({ error: user.message, message: 'user not found' });
   }
 
   return res.json({ user: transformToPublic(user) });
