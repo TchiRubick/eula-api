@@ -1,3 +1,10 @@
+/* eslint-disable import/first */
+import moduleAlias from 'module-alias';
+
+moduleAlias.addAliases({
+  '~': `${__dirname}/`,
+});
+
 import express from 'express';
 import { ValidationError } from 'express-validation';
 import cookieParser from 'cookie-parser';
@@ -14,8 +21,6 @@ import userAdminRoute from '~/routes/user/user.admin.route';
 import inventoryPrivateRoute from '~/routes/inventory/inventory.private.route';
 import salePrivateRoute from '~/routes/sale/sale.private.route';
 import saleAdminRoute from '~/routes/sale/sale.admin.route';
-
-require('module-alias/register');
 
 const PORT = process.env.PORT || 5000;
 
