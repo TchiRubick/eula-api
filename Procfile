@@ -1,1 +1,1 @@
-web: ./bin/www yarn start:prod
+web: yarn start:prod
