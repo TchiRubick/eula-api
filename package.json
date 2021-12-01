@@ -2,9 +2,12 @@
   "name": "eula-api",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "sh .clearLog.sh && nodemon",
-    "start:prod": "npm run build && node build/index.js",
+    "start:prod": "node build/index.js",
     "build": "rimraf ./build && tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --ext .ts --fix",
