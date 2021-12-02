@@ -29,7 +29,7 @@ const app = express();
 try {
   app.disable('x-powered-by');
   app.use(cookieParser());
-  app.use(cors({ origin: [/localhost(:[0-9]+)*/] }));
+  app.use(cors({ origin: [/localhost(:[0-9]+)*/, 'https://master.d2i1p96lv0xrz1.amplifyapp.com/'] }));
   app.use('/favicon.ico', express.static('public/favicon.ico'));
   app.use(express.json());
   app.use(express.urlencoded({
