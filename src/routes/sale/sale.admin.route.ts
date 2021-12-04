@@ -7,7 +7,7 @@ import { oscillatorQuantity } from '~/services/inventories/inventory.repository'
 const router = Router();
 
 router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
-  const lastTicket = await saleRepository.getLastTicket();
+  const lastTicket = await saleRepository.getLastTicket({});
 
   const sale = await saleRepository.getOneNoJoin({ ticket: lastTicket, status: 'saled' });
 
@@ -29,15 +29,15 @@ router.patch('/', adminCheckMiddleware, async (req: Request, res: Response) => {
       await sessionTransaction.abortTransaction();
       return res.status(422).json({ error: updateInventory.message, message: 'Cannot cancel ticket inventory' });
     }
+  }
 
-    const { _id: idSale } = sale;
+  const { _id: idSale } = sale;
 
-    const updateSale = await saleRepository.update({ _id: idSale }, { status: 'refund' });
+  const updateSale = await saleRepository.update({ _id: idSale }, { status: 'refund' });
 
-    if (updateSale instanceof Error) {
-      await sessionTransaction.abortTransaction();
-      return res.status(422).json({ error: 'Cannot refund ticket', message: 'Cannot cancel ticket' });
-    }
+  if (updateSale instanceof Error) {
+    await sessionTransaction.abortTransaction();
+    return res.status(422).json({ error: 'Cannot refund ticket', message: 'Cannot cancel ticket' });
   }
 
   await sessionTransaction.commitTransaction();

@@ -7,6 +7,7 @@ import * as saleRepository from '~/services/sales/sale.repository';
 import { getOne, oscillatorQuantity } from '~/services/inventories/inventory.repository';
 import { getPaginationStats } from '~/services/pagination/pagination.service';
 import { transformManySampleUserToPrivate, transformToPrivate } from '~/services/sales/sale.transformer';
+import { isISampleOutputSale } from '~/services/sales/sale.interface';
 
 const router = Router();
 
@@ -24,12 +25,15 @@ const createValidation = {
 
 router.post('/', privateCheckMiddleware, validate(createValidation), async (req: Request, res: Response) => {
   const sessionTransaction = await saleRepository.session();
-
-  const lastTicket = await saleRepository.getLastTicket();
-
-  const ticket = lastTicket + 1;
-
   const { _id: idUser } = req.user;
+
+  const lastTicket = await saleRepository.getLastTicket({});
+
+  let ticket = 0;
+
+  if (isISampleOutputSale(lastTicket)) {
+    ticket = lastTicket.ticket + 1;
+  }
 
   sessionTransaction.startTransaction();
 
@@ -134,6 +138,18 @@ router.get('/', privateCheckMiddleware, validate(filterValidation), async (req: 
   return res.json({ sales: salesResponse, stats, resume });
 });
 
+router.get('/last-ticket', privateCheckMiddleware, async (req: Request, res: Response) => {
+  const { _id: userId } = req.user;
+
+  const sale = await saleRepository.getLastTicket({ user: userId });
+
+  if (sale instanceof Error) {
+    return res.status(422).json({ error: sale.message, message: 'Cannot cancel ticket' });
+  }
+
+  return res.json({ sale });
+});
+
 const detailsValidation = {
   params: Joi.object({
     ticket: Joi.number().required(),
@@ -150,6 +166,49 @@ router.get('/:ticket', privateCheckMiddleware, validate(detailsValidation), asyn
   }
 
   return res.json({ users: transformToPrivate(sale) });
+});
+
+router.patch('/', privateCheckMiddleware, async (req: Request, res: Response) => {
+  const { _id: userId } = req.user;
+
+  const sale = await saleRepository.getLastTicket({ user: userId });
+
+  if (sale instanceof Error) {
+    return res.status(422).json({ error: sale.message, message: 'Cannot cancel ticket' });
+  }
+
+  if (sale.status !== 'saled') {
+    return res.status(422).json({ error: true, message: 'Last ticket cannot be canceled' });
+  }
+
+  const sessionTransaction = await saleRepository.session();
+
+  sessionTransaction.startTransaction();
+
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const inv of sale.inventories) {
+    const { inventory, quantity } = inv;
+
+    const updateInventory = await oscillatorQuantity({ _id: inventory }, quantity);
+
+    if (updateInventory instanceof Error) {
+      await sessionTransaction.abortTransaction();
+      return res.status(422).json({ error: updateInventory.message, message: 'Cannot cancel ticket inventory' });
+    }
+  }
+
+  const { _id: idSale } = sale;
+
+  const updateSale = await saleRepository.update({ _id: idSale }, { status: 'refund' });
+
+  if (updateSale instanceof Error) {
+    await sessionTransaction.abortTransaction();
+    return res.status(422).json({ error: 'Cannot refund ticket', message: 'Cannot cancel ticket' });
+  }
+
+  await sessionTransaction.commitTransaction();
+
+  return res.json({ sale: updateSale });
 });
 
 export default router;

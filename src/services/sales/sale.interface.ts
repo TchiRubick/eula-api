@@ -98,3 +98,15 @@ export interface getByDate {
 export interface getTotalByDateSaled {
   (date: Date | number): Promise<iOutputMoney>
 }
+
+export const isISampleOutputSale = (obj: any | unknown): obj is iSampleOutputSale => (
+  '_id' in obj
+  && 'inventories' in obj
+  && 'user' in obj
+  && 'ticket' in obj
+  && 'status' in obj
+  && 'payed' in obj
+  && 'backed' in obj
+  && 'createdAt' in obj
+  && 'updatedAt' in obj
+);

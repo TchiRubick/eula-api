@@ -51,17 +51,15 @@ export const update = async (where: any | unknown, params: any | unknown): Promi
   return result;
 };
 
-export const getLastTicket = async (): Promise<number> => {
-  let result = 0;
+export const getLastTicket = async (where: any | unknown): Promise<iS.iSampleOutputSale | Error> => {
+  let result: iS.iSampleOutputSale | Error;
 
   try {
-    const sale = await Sale.findOne().sort({ field: 'asc', _id: -1 });
-
-    if (sale) {
-      result = sale.ticket;
-    }
+    result = await Sale.findOne(where).sort({ field: 'asc', _id: -1 });
   } catch (error: any) {
     logger.error(error.message);
+
+    result = error;
   }
 
   return result;

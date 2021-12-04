@@ -7,10 +7,8 @@ moduleAlias.addAliases({
 
 import express from 'express';
 import { ValidationError } from 'express-validation';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import createError from 'http-errors';
-import csrf from 'csurf';
 
 import logger from '~/utils/logger/logger.util';
 import { database } from '~/database/index.database';
@@ -29,8 +27,6 @@ const app = express();
 
 try {
   app.disable('x-powered-by');
-  app.use(cookieParser());
-  app.use(csrf({ cookie: true }));
   app.use(cors({ origin: [/localhost(:[0-9]+)*/, /https?:\/\/([a-z0-9-]+[.])*amplifyapp[.]com/] }));
   app.use('/favicon.ico', express.static('public/favicon.ico'));
   app.use(express.json());
