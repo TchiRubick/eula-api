@@ -31,6 +31,7 @@ try {
     origin: [
       /localhost(:[0-9]+)*/,
       /https:\/\/havoana[.]net/,
+      /https:\/\/noushop[.]havoana[.]net/,
     ],
   }));
   app.use('/favicon.ico', express.static('public/favicon.ico'));
