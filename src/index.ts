@@ -27,7 +27,12 @@ const app = express();
 
 try {
   app.disable('x-powered-by');
-  app.use(cors({ origin: [/localhost(:[0-9]+)*/, /https?:\/\/([a-z0-9-]+[.])*amplifyapp[.]com/] }));
+  app.use(cors({
+    origin: [
+      /localhost(:[0-9]+)*/,
+      /https:\/\/havoana[.]net/,
+    ],
+  }));
   app.use('/favicon.ico', express.static('public/favicon.ico'));
   app.use(express.json());
   app.use(express.urlencoded({
