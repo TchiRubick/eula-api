@@ -20,7 +20,7 @@ const protectedCheckMiddleware = async (req: Request, res: Response, next: NextF
       throw user;
     }
 
-    if (user.role !== 'admin') {
+    if (user.role !== 'admin' && user.role !== 'super-admin') {
       logger.error('not a admin');
       return res.status(401).json({ error: 'not an admin' });
     }
