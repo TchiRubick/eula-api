@@ -8,6 +8,7 @@ import { getOne, oscillatorQuantity } from '~/services/inventories/inventory.rep
 import { getPaginationStats } from '~/services/pagination/pagination.service';
 import { transformManySampleUserToPrivate, transformToPrivate } from '~/services/sales/sale.transformer';
 import { isISampleOutputSale } from '~/services/sales/sale.interface';
+import logger from '~/utils/logger/logger.util';
 
 const router = Router();
 
@@ -31,8 +32,13 @@ router.post('/', privateCheckMiddleware, validate(createValidation), async (req:
 
   let ticket = 0;
 
-  if (lastTicket && isISampleOutputSale(lastTicket)) {
-    ticket = lastTicket.ticket + 1;
+  // TODO: Bug catcher to fix
+  try {
+    if (isISampleOutputSale(lastTicket)) {
+      ticket = lastTicket.ticket + 1;
+    }
+  } catch (error: any) {
+    logger.error(error.message);
   }
 
   sessionTransaction.startTransaction();
