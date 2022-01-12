@@ -1,6 +1,6 @@
 const config = {
   database: {
-    url: process.env.DB_URL || 'mongodb://root:example@mongodb:27017/',
+    url: process.env.DB_URL || 'mongodb://root:example@eula-db:27017/',
     options: {},
   },
 };

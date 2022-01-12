@@ -17,14 +17,14 @@ services:
       - "5000:5000"
     stdin_open: true
     links:
-      - mongodb
+      - eula-db
     depends_on:
-      - mongodb
+      - eula-db
     networks:
       - node-webapp-network
   
-  mongodb:
-    container_name: mongodb
+  eula-db:
+    container_name: eula-db
     image: mongo:4.4.6
     volumes:
       - ~/mongo:/data/db
