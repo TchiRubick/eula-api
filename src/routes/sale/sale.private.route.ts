@@ -31,7 +31,7 @@ router.post('/', privateCheckMiddleware, validate(createValidation), async (req:
 
   let ticket = 0;
 
-  if (isISampleOutputSale(lastTicket)) {
+  if (lastTicket && isISampleOutputSale(lastTicket)) {
     ticket = lastTicket.ticket + 1;
   }
 
