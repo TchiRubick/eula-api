@@ -133,7 +133,7 @@ router.get('/', privateCheckMiddleware, validate(filterValidation), async (req: 
     return res.status(422).json({ error: sales.message, message: 'Cannot get list of sales' });
   }
 
-  const count = await saleRepository.getCount();
+  const count = await saleRepository.getCountByDate(date);
 
   const stats = getPaginationStats(page, size, count);
 

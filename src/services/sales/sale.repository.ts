@@ -116,6 +116,17 @@ export const getCount = async (where?: any | unknown): Promise<number> => {
   return count ?? 0;
 };
 
+export const getCountByDate = async (date: Date): Promise<number> => {
+  const count: number = await Sale.countDocuments({
+    createdAt: {
+      $gte: startOfDay(date),
+      $lte: endOfDay(date),
+    },
+  });
+
+  return count ?? 0;
+};
+
 export const getTotalByDateSaled: iS.getTotalByDateSaled = async (date) => {
   let result: iS.iOutputMoney = {
     _id: null,
